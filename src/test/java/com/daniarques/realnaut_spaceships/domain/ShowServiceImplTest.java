@@ -36,9 +36,10 @@ class ShowServiceImplTest {
 
 	@Test
 	void when_getShowById_found_should_getShow() {
-		final ShowEntity showEntity = new ShowEntity();
-		showEntity.setId(ID);
-		showEntity.setName(SHOW_NAME);
+		final ShowEntity showEntity = ShowEntity.builder()
+				.id(ID)
+				.name(SHOW_NAME)
+				.build();
 		given(this.showRepository.findById(ID)).willReturn(Optional.of(showEntity));
 
 		final Show actualShow = this.showService.getShowById(ID);
@@ -55,9 +56,10 @@ class ShowServiceImplTest {
 	}
 	@Test
 	void when_getPaginatedShows_found_should_getShows() {
-		final ShowEntity showEntity = new ShowEntity();
-		showEntity.setId(ID);
-		showEntity.setName(SHOW_NAME);
+		final ShowEntity showEntity = ShowEntity.builder()
+				.id(ID)
+				.name(SHOW_NAME)
+				.build();
 		final PageRequest pageable = PageRequest.of(0, 1);
 		given(this.showRepository.findAll(pageable)).willReturn(new PageImpl<>(List.of(showEntity),pageable,100 ));
 

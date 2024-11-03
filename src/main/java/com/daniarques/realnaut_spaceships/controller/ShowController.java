@@ -1,6 +1,6 @@
 package com.daniarques.realnaut_spaceships.controller;
 
-import com.daniarques.realnaut_spaceships.domain.ShowServiceImpl;
+import com.daniarques.realnaut_spaceships.domain.ShowService;
 import com.daniarques.realnaut_spaceships.domain.model.Show;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class ShowController {
 
-	private final ShowServiceImpl showService;
+	private final ShowService showService;
 
 	@GetMapping(value = "/shows/{id}")
 	public ResponseEntity<Show> getShowById(@PathVariable final Long id) {
