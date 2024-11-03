@@ -10,7 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,4 +53,18 @@ class ShowServiceImplTest {
 
 		assertThat(actualShow).isNull();
 	}
+	@Test
+	void when_getPaginatedShows_found_should_getShows() {
+		final ShowEntity showEntity = new ShowEntity();
+		showEntity.setId(ID);
+		showEntity.setName(SHOW_NAME);
+		final PageRequest pageable = PageRequest.of(0, 1);
+		given(this.showRepository.findAll(pageable)).willReturn(new PageImpl<>(List.of(showEntity),pageable,100 ));
+
+		final Page<Show> actualPage = this.showService.getPaginatedShows(1, 0);
+
+		final Show expectedShow = Show.builder().id(ID).name(SHOW_NAME).build();
+		assertThat(actualPage).isEqualTo(new PageImpl<>(List.of(expectedShow), pageable, 100));
+	}
+
 }
