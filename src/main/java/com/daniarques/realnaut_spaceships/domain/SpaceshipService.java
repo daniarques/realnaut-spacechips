@@ -1,20 +1,19 @@
 package com.daniarques.realnaut_spaceships.domain;
 
 import com.daniarques.realnaut_spaceships.domain.model.Spaceship;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface SpaceshipService {
 
 
-	Spaceship getSpaceshipById(Long id);
+    Spaceship getSpaceshipById(Long id);
 
-    List<Spaceship> findAllByNameContains(String nameFilter);
+    Page<Spaceship> findAllByFilter(Integer size, Integer page, String nameFilter);
 
     void createSpaceship(Spaceship spaceship);
 
-	void updateSpaceship(Long id, Spaceship spaceship);
+    void updateSpaceship(Long id, Spaceship spaceship);
 
-	void deleteSpaceship(Long id);
+    void deleteSpaceship(Long id);
 
 }

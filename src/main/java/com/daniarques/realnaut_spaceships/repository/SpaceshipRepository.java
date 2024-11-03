@@ -1,13 +1,11 @@
 package com.daniarques.realnaut_spaceships.repository;
 
 import com.daniarques.realnaut_spaceships.repository.entity.SpaceshipEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface SpaceshipRepository extends JpaRepository<SpaceshipEntity, Long> {
+public interface SpaceshipRepository extends CrudRepository<SpaceshipEntity, Long>, JpaSpecificationExecutor<SpaceshipEntity> {
 
-    List<SpaceshipEntity> findByNameContainingIgnoreCase(String name);
 }

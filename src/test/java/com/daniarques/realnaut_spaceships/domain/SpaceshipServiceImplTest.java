@@ -12,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +78,7 @@ class SpaceshipServiceImplTest {
     }
 
     @Test
-    void when_findAllByNameContains_spaceshipsFound_should_returnSpaceships() {
+    void when_findAllByFilter_spaceshipsFound_should_returnSpaceships() {
 
         final SpaceshipEntity spaceshipEntity = SpaceshipEntity.builder()
                 .id(ID)
@@ -85,9 +88,11 @@ class SpaceshipServiceImplTest {
                         .name(SHOW_NAME)
                         .build())
                 .build();
-        given(this.spaceshipRepository.findByNameContainingIgnoreCase(SPACESHIP_NAME)).willReturn(List.of(spaceshipEntity));
+        final PageRequest pageable = PageRequest.of(0, 10);
+        given(this.spaceshipRepository.findAll(any(), eq(pageable)))
+                .willReturn(new PageImpl<>(List.of(spaceshipEntity), pageable, 100));
 
-        final List<Spaceship> actualSpaceships = this.spaceshipService.findAllByNameContains(SPACESHIP_NAME);
+        final Page<Spaceship> actualSpaceships = this.spaceshipService.findAllByFilter(10, 0, SPACESHIP_NAME);
 
         final Spaceship expectedSpaceship = Spaceship.builder()
                 .id(ID)
@@ -95,6 +100,34 @@ class SpaceshipServiceImplTest {
                 .show(SHOW_NAME)
                 .build();
         assertThat(actualSpaceships).first().isEqualTo(expectedSpaceship);
+        assertThat(actualSpaceships.getTotalElements()).isEqualTo(100);
+    }
+
+
+    @Test
+    void when_findAllByFilter_withoutNameFilter_spaceshipsFound_should_returnSpaceships() {
+
+        final SpaceshipEntity spaceshipEntity = SpaceshipEntity.builder()
+                .id(ID)
+                .name(SPACESHIP_NAME)
+                .show(ShowEntity.builder()
+                        .id(SHOW_ID)
+                        .name(SHOW_NAME)
+                        .build())
+                .build();
+        final PageRequest pageable = PageRequest.of(0, 10);
+        given(this.spaceshipRepository.findAll(null, pageable))
+                .willReturn(new PageImpl<>(List.of(spaceshipEntity), pageable, 100));
+
+        final Page<Spaceship> actualSpaceships = this.spaceshipService.findAllByFilter(10, 0, null);
+
+        final Spaceship expectedSpaceship = Spaceship.builder()
+                .id(ID)
+                .name(SPACESHIP_NAME)
+                .show(SHOW_NAME)
+                .build();
+        assertThat(actualSpaceships).first().isEqualTo(expectedSpaceship);
+        assertThat(actualSpaceships.getTotalElements()).isEqualTo(100);
     }
 
 
