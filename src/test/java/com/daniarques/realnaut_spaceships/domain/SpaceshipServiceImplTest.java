@@ -1,5 +1,7 @@
 package com.daniarques.realnaut_spaceships.domain;
 
+import com.daniarques.realnaut_spaceships.domain.exception.InvalidParameterException;
+import com.daniarques.realnaut_spaceships.domain.exception.NotFoundException;
 import com.daniarques.realnaut_spaceships.domain.mapper.SpaceshipMapperImpl;
 import com.daniarques.realnaut_spaceships.domain.model.Spaceship;
 import com.daniarques.realnaut_spaceships.repository.ShowRepository;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -68,13 +71,13 @@ class SpaceshipServiceImplTest {
     }
 
     @Test
-    void when_getSpaceshipById_spaceshipNotFound_should_returnNull() {
+    void when_getSpaceshipById_spaceshipNotFound_should_throwException() {
 
         given(this.spaceshipRepository.findById(ID)).willReturn(Optional.empty());
 
-        final Spaceship actualSpaceship = this.spaceshipService.getSpaceshipById(ID);
-
-        assertThat(actualSpaceship).isNull();
+        assertThatThrownBy(() -> this.spaceshipService.getSpaceshipById(ID))
+                .isInstanceOf(NotFoundException.class)
+                .hasFieldOrPropertyWithValue("message", "spaceship entity with id:1 not found");
     }
 
     @Test
@@ -226,7 +229,7 @@ class SpaceshipServiceImplTest {
     }
 
     @Test
-    void when_updateSpaceship_spaceshipNotFound_should_doNothing() {
+    void when_updateSpaceship_spaceshipNotFound_should_throwException() {
 
         given(this.spaceshipRepository.findById(ID)).willReturn(Optional.empty());
 
@@ -235,7 +238,9 @@ class SpaceshipServiceImplTest {
                 .name(SPACESHIP_NAME)
                 .show(SHOW_NAME)
                 .build();
-        this.spaceshipService.updateSpaceship(ID, spaceship);
+        assertThatThrownBy(() -> this.spaceshipService.updateSpaceship(ID, spaceship))
+                .isInstanceOf(NotFoundException.class)
+                .hasFieldOrPropertyWithValue("message", "spaceship entity with id:1 not found");
 
         then(this.showRepository).should(never()).findByName(anyString());
         then(this.spaceshipRepository).should(never()).save(any());
@@ -249,7 +254,9 @@ class SpaceshipServiceImplTest {
                 .name(SPACESHIP_NAME)
                 .show(SHOW_NAME)
                 .build();
-        this.spaceshipService.updateSpaceship(100L, spaceship);
+        assertThatThrownBy(() -> this.spaceshipService.updateSpaceship(100L, spaceship))
+                .isInstanceOf(InvalidParameterException.class)
+                .hasFieldOrPropertyWithValue("message", "id can not be modified");
 
         then(this.spaceshipRepository).should(never()).findById(anyLong());
         then(this.showRepository).should(never()).findByName(anyString());

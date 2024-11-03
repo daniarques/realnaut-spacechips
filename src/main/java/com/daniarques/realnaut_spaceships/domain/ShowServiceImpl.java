@@ -1,5 +1,6 @@
 package com.daniarques.realnaut_spaceships.domain;
 
+import com.daniarques.realnaut_spaceships.domain.exception.NotFoundException;
 import com.daniarques.realnaut_spaceships.domain.mapper.ShowMapper;
 import com.daniarques.realnaut_spaceships.domain.model.Show;
 import com.daniarques.realnaut_spaceships.repository.ShowRepository;
@@ -13,32 +14,33 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 @Component
 @AllArgsConstructor
 public class ShowServiceImpl implements ShowService {
 
-	private final ShowRepository showRepository;
-	private final ShowMapper showMapper;
+    private final ShowRepository showRepository;
+    private final ShowMapper showMapper;
 
-	@Override
-	public Show getShowById(final Long id) {
+    @Override
+    public Show getShowById(final Long id) {
 
-		final Optional<ShowEntity> entityFound = this.showRepository.findById(id);
-		return entityFound.map(this.showMapper::map)
-				// TODO 3/11/24: Throw custom exception
-				.orElse(null);
-	}
+        final Optional<ShowEntity> entityFound = this.showRepository.findById(id);
+        return entityFound.map(this.showMapper::map)
+                .orElseThrow(() -> new NotFoundException(format("show entity with id:%s not found", id)));
+    }
 
-	@Override
-	public Page<Show> getPaginatedShows(final Integer size, final Integer page) {
+    @Override
+    public Page<Show> getPaginatedShows(final Integer size, final Integer page) {
 
-		final PageRequest pageable = PageRequest.of(page, size);
-		final Page<ShowEntity> foundShowPage = this.showRepository.findAll(pageable);
+        final PageRequest pageable = PageRequest.of(page, size);
+        final Page<ShowEntity> foundShowPage = this.showRepository.findAll(pageable);
 
-		final List<Show> shows = foundShowPage.stream()
-				.map(this.showMapper::map)
-				.toList();
+        final List<Show> shows = foundShowPage.stream()
+                .map(this.showMapper::map)
+                .toList();
 
-		return new PageImpl<>(shows, pageable, foundShowPage.getTotalElements());
-	}
+        return new PageImpl<>(shows, pageable, foundShowPage.getTotalElements());
+    }
 }
