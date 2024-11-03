@@ -1,4 +1,4 @@
-package com.daniarques.realnaut_spacechips;
+package com.daniarques.realnaut_spaceships;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
