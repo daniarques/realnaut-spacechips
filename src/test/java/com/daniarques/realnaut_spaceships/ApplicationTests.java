@@ -1,4 +1,4 @@
-package com.daniarques.realnaut_spacechips;
+package com.daniarques.realnaut_spaceships;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
