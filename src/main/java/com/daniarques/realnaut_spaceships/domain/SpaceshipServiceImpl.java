@@ -1,5 +1,7 @@
 package com.daniarques.realnaut_spaceships.domain;
 
+import com.daniarques.realnaut_spaceships.domain.exception.InvalidParameterException;
+import com.daniarques.realnaut_spaceships.domain.exception.NotFoundException;
 import com.daniarques.realnaut_spaceships.domain.mapper.SpaceshipMapper;
 import com.daniarques.realnaut_spaceships.domain.model.Spaceship;
 import com.daniarques.realnaut_spaceships.repository.ShowRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.micrometer.common.util.StringUtils.isEmpty;
+import static java.lang.String.format;
 
 @Component
 @AllArgsConstructor
@@ -31,8 +34,7 @@ public class SpaceshipServiceImpl implements SpaceshipService {
 
         final Optional<SpaceshipEntity> entityFound = this.spaceshipRepository.findById(id);
         return entityFound.map(this.spaceshipMapper::map)
-                // TODO 3/11/24: Throw custom exception
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException(format("spaceship entity with id:%s not found", id)));
     }
 
     @Override
@@ -40,10 +42,10 @@ public class SpaceshipServiceImpl implements SpaceshipService {
 
         final PageRequest pageable = PageRequest.of(page, size);
         final Page<SpaceshipEntity> foundSpaceshipsPage = this.spaceshipRepository.findAll(this.buildSpecification(nameFilter), pageable);
+
         final List<Spaceship> spaceships = foundSpaceshipsPage.stream()
                 .map(this.spaceshipMapper::map)
                 .toList();
-
         return new PageImpl<>(spaceships, pageable, foundSpaceshipsPage.getTotalElements());
     }
 
@@ -66,16 +68,13 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     public void updateSpaceship(final Long id, final Spaceship spaceship) {
 
         if (!id.equals(spaceship.getId())) {
-            return;
-            // TODO 3/11/24: Throw custom exception
+            throw new InvalidParameterException("id can not be modified");
         }
 
-        final Optional<SpaceshipEntity> spaceshipFound = this.spaceshipRepository.findById(id);
+        this.spaceshipRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(format("spaceship entity with id:%s not found", id)));
 
-        if (spaceshipFound.isPresent()) {
-            this.saveSpaceship(spaceship);
-        }
-        // TODO 3/11/24: Throw custom exception
+        this.saveSpaceship(spaceship);
     }
 
     @Override
@@ -85,7 +84,8 @@ public class SpaceshipServiceImpl implements SpaceshipService {
 
     }
 
-    private void saveSpaceship(final Spaceship spaceship) {
+    private void saveSpaceship(final Spaceship spaceship //TODO 3/11/24: Provide show refactor
+    ) {
 
         final ShowEntity show = this.showRepository.findByName(spaceship.getShow())
                 .orElseGet(() -> ShowEntity.builder()

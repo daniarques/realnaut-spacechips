@@ -16,48 +16,49 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(controllers = ShowController.class)
 class ShowControllerIT {
-	private static final long ID = 1L;
-	private static final String SHOW_NAME = "Show name";
-	@Autowired
-	private MockMvc mockMvc;
+    private static final long ID = 1L;
+    private static final String SHOW_NAME = "Show name";
+    @Autowired
+    private MockMvc mockMvc;
 
-	@MockBean
-	private ShowServiceImpl showService;
+    @MockBean
+    private ShowServiceImpl showService;
 
-	@Test
-	void when_getShow_and_showFound_should_succeed() throws Exception {
+    @Test
+    void when_getShow_and_showFound_should_succeed() throws Exception {
 
-		final Show show = Show.builder().id(ID).name(SHOW_NAME).build();
-		given(this.showService.getShowById(ID)).willReturn(show);
+        final Show show = Show.builder().id(ID).name(SHOW_NAME).build();
+        given(this.showService.getShowById(ID)).willReturn(show);
 
-		this.mockMvc.perform(get("/shows/1"))
+        this.mockMvc.perform(get("/shows/1"))
                 .andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value(SHOW_NAME));
-	}
+    }
 
-	@Test
-	void when_getShow_and_showNotFound_should_succeed() throws Exception {
+    @Test
+    void when_getShow_and_showNotFound_should_succeed() throws Exception {
 
-		given(this.showService.getShowById(ID)).willReturn(null);
+        given(this.showService.getShowById(ID)).willReturn(null);
 
-		this.mockMvc.perform(get("/shows/1"))
+        this.mockMvc.perform(get("/shows/1"))
                 .andExpect(status().isOk())
-				.andExpect(jsonPath("$").doesNotExist());
-	}
-	@Test
-	void when_getPaginatedShows_and_showsFound_should_succeed() throws Exception {
+                .andExpect(jsonPath("$").doesNotExist());
+    }
 
-		final Show show = Show.builder().id(ID).name(SHOW_NAME).build();
-		given(this.showService.getPaginatedShows(1,0))
-				.willReturn(new PageImpl<>(List.of(show)));
+    @Test
+    void when_getPaginatedShows_and_showsFound_should_succeed() throws Exception {
 
-		this.mockMvc.perform(get("/shows?page=0&size=1"))
+        final Show show = Show.builder().id(ID).name(SHOW_NAME).build();
+        given(this.showService.getPaginatedShows(1, 0))
+                .willReturn(new PageImpl<>(List.of(show)));
+
+        this.mockMvc.perform(get("/shows?page=0&size=1"))
                 .andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[0].id").value("1"))
+                .andExpect(jsonPath("$.content[0].id").value("1"))
                 .andExpect(jsonPath("$.content[0].name").value(SHOW_NAME))
-				.andExpect(jsonPath("$.totalElements").value("1"));
-	}
+                .andExpect(jsonPath("$.totalElements").value("1"));
+    }
 }
