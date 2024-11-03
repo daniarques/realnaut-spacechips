@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +73,30 @@ class SpaceshipServiceImplTest {
 
         assertThat(actualSpaceship).isNull();
     }
+
+    @Test
+    void when_findAllByNameContains_spaceshipsFound_should_returnSpaceships() {
+
+        final SpaceshipEntity spaceshipEntity = SpaceshipEntity.builder()
+                .id(ID)
+                .name(SPACESHIP_NAME)
+                .show(ShowEntity.builder()
+                        .id(SHOW_ID)
+                        .name(SHOW_NAME)
+                        .build())
+                .build();
+        given(this.spaceshipRepository.findByNameContainingIgnoreCase(SPACESHIP_NAME)).willReturn(List.of(spaceshipEntity));
+
+        final List<Spaceship> actualSpaceships = this.spaceshipService.findAllByNameContains(SPACESHIP_NAME);
+
+        final Spaceship expectedSpaceship = Spaceship.builder()
+                .id(ID)
+                .name(SPACESHIP_NAME)
+                .show(SHOW_NAME)
+                .build();
+        assertThat(actualSpaceships).first().isEqualTo(expectedSpaceship);
+    }
+
 
     @Test
     void when_createSpaceship_showFound_should_createSpaceship() {
@@ -197,6 +222,7 @@ class SpaceshipServiceImplTest {
         then(this.showRepository).should(never()).findByName(anyString());
         then(this.spaceshipRepository).should(never()).save(any());
     }
+
     @Test
     void when_deleteSpaceship_should_deleteSpaceship() {
 
