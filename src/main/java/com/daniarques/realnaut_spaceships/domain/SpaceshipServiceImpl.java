@@ -9,6 +9,7 @@ import com.daniarques.realnaut_spaceships.repository.entity.SpaceshipEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -26,6 +27,15 @@ public class SpaceshipServiceImpl implements SpaceshipService {
 		return entityFound.map(this.spaceshipMapper::map)
 				// TODO 3/11/24: Throw custom exception
 				.orElse(null);
+	}
+
+	@Override
+	public List<Spaceship> findAllByNameContains(final String nameFilter) {
+
+		final List<SpaceshipEntity> spaceShips = this.spaceshipRepository.findByNameContainingIgnoreCase(nameFilter);
+		return spaceShips.stream()
+				.map(this.spaceshipMapper::map)
+				.toList();
 	}
 
 	@Override

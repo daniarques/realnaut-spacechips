@@ -6,40 +6,48 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 public class SpaceshipController {
 
-	private final SpaceshipService showService;
+    private final SpaceshipService showService;
 
-	@GetMapping(value = "/spaceship/{id}")
-	public ResponseEntity<Spaceship> getSpaceshipById(@PathVariable final Long id) {
+    @GetMapping(value = "/spaceship/{id}")
+    public ResponseEntity<Spaceship> getSpaceshipById(@PathVariable final Long id) {
 
-		return ResponseEntity.ok(this.showService.getSpaceshipById(id));
-	}
+        return ResponseEntity.ok(this.showService.getSpaceshipById(id));
+    }
 
-	@PostMapping(value = "/spaceship")
-	public ResponseEntity<Void> createSpaceship(@RequestBody final Spaceship spaceship) {
+    @GetMapping(value = "/spaceship")
+    public ResponseEntity<List<Spaceship>> findAllByNameContains(@RequestParam final String nameFilter) {
 
-		this.showService.createSpaceship(spaceship);
+        return ResponseEntity.ok(this.showService.findAllByNameContains(nameFilter));
+    }
 
-		return ResponseEntity.ok().build();
-	}
+    @PostMapping(value = "/spaceship")
+    public ResponseEntity<Void> createSpaceship(@RequestBody final Spaceship spaceship) {
 
-	@PutMapping(value = "/spaceship/{id}")
-	public ResponseEntity<Void> updateSpaceship(@PathVariable Long id, @RequestBody final Spaceship spaceship) {
+        this.showService.createSpaceship(spaceship);
 
-		this.showService.updateSpaceship(id, spaceship);
+        return ResponseEntity.ok().build();
+    }
 
-		return ResponseEntity.ok().build();
-	}
+    @PutMapping(value = "/spaceship/{id}")
+    public ResponseEntity<Void> updateSpaceship(@PathVariable Long id, @RequestBody final Spaceship spaceship) {
 
-	@DeleteMapping(value = "/spaceship/{id}")
-	public ResponseEntity<Void> deleteSpaceship(@PathVariable Long id) {
+        this.showService.updateSpaceship(id, spaceship);
 
-		this.showService.deleteSpaceship(id);
+        return ResponseEntity.ok().build();
+    }
 
-		return ResponseEntity.ok().build();
-	}
+    @DeleteMapping(value = "/spaceship/{id}")
+    public ResponseEntity<Void> deleteSpaceship(@PathVariable Long id) {
+
+        this.showService.deleteSpaceship(id);
+
+        return ResponseEntity.ok().build();
+    }
 
 }
