@@ -28,6 +28,7 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     private final SpaceshipRepository spaceshipRepository;
     private final ShowRepository showRepository;
     private final SpaceshipMapper spaceshipMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     @Override
     public Spaceship getSpaceshipById(final Long id) {
@@ -62,6 +63,8 @@ public class SpaceshipServiceImpl implements SpaceshipService {
     public void createSpaceship(final Spaceship spaceship) {
 
         this.saveSpaceship(spaceship);
+
+        this.kafkaProducerService.publishSpaceshipCreatedEvent(spaceship);
     }
 
     @Override
