@@ -1,15 +1,19 @@
 package com.daniarques.realnaut_spaceships.domain.model;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
+
+@Getter
 @Builder
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class Spaceship {
 
-	long id;
+    long id;
 
-	String name;
+    String name;
 
-	String show;
+    String show;
 }

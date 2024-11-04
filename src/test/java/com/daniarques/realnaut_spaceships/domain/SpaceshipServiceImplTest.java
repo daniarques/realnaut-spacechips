@@ -43,6 +43,9 @@ class SpaceshipServiceImplTest {
     @Spy
     private SpaceshipMapperImpl spaceshipMapper;
 
+    @Mock
+    private KafkaProducerService kafkaProducerService;
+
     @InjectMocks
     private SpaceshipServiceImpl spaceshipService;
 
@@ -156,6 +159,7 @@ class SpaceshipServiceImplTest {
                 .show(showEntity)
                 .build();
         then(this.spaceshipRepository).should().save(expectedSpaceshipEntity);
+        then(this.kafkaProducerService).should().publishSpaceshipCreatedEvent(spaceship);
     }
 
     @Test
@@ -178,10 +182,11 @@ class SpaceshipServiceImplTest {
                         .build())
                 .build();
         then(this.spaceshipRepository).should().save(expectedSpaceshipEntity);
+        then(this.kafkaProducerService).should().publishSpaceshipCreatedEvent(spaceship);
     }
 
     @Test
-    void when_updateSpaceship_showFound_should_createSpaceship() {
+    void when_updateSpaceship_showFound_should_updateSpaceship() {
 
         given(spaceshipRepository.findById(ID)).willReturn(Optional.of(SpaceshipEntity.builder().build()));
         final ShowEntity showEntity = ShowEntity.builder()
@@ -206,7 +211,7 @@ class SpaceshipServiceImplTest {
     }
 
     @Test
-    void when_updateSpaceship_showNotFound_should_createSpaceship() {
+    void when_updateSpaceship_showNotFound_should_updateSpaceship() {
 
         given(spaceshipRepository.findById(ID)).willReturn(Optional.of(SpaceshipEntity.builder().build()));
         given(this.showRepository.findByName(SHOW_NAME)).willReturn(Optional.empty());
