@@ -9,11 +9,11 @@ This repository contains a solution of the Realnaut's assessment about movies an
 1. Clone this repository
 2. `cd src/main/resources/docker`
 3. `docker compose up`
-4. `mvn spring-boot:run`
+4. From project's root: `mvn spring-boot:run`
 5. Go to http://localhost:8080/swagger-ui/index.html
 6. Actuator endpoint: http://localhost:8080/actuator
 
-### For testing kafka producer/cosumer:
+### For testing kafka producer/consumer:
 
 1. Run `curl --location 'http://localhost:8080/spaceship' \
 --header 'Content-Type: application/json' \
