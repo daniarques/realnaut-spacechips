@@ -6,6 +6,7 @@ import com.daniarques.realnaut_spaceships.domain.model.Show;
 import com.daniarques.realnaut_spaceships.repository.ShowRepository;
 import com.daniarques.realnaut_spaceships.repository.entity.ShowEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ public class ShowServiceImpl implements ShowService {
     private final ShowMapper showMapper;
 
     @Override
+    @Cacheable(value = "shows-cache")
     public Show getShowById(final Long id) {
 
         final Optional<ShowEntity> entityFound = this.showRepository.findById(id);
@@ -32,6 +34,7 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
+    @Cacheable(value = "shows-cache")
     public Page<Show> getPaginatedShows(final Integer size, final Integer page) {
 
         final PageRequest pageable = PageRequest.of(page, size);

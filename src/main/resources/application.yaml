@@ -8,3 +8,13 @@ spring:
     driverClassName: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+
+  cache:
+    cache-names: shows-cache
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=600s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: caches
