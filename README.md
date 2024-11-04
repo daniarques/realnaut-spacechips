@@ -15,11 +15,8 @@ This repository contains a solution of the Realnaut's assessment about movies an
 
 ### For testing kafka producer/consumer:
 
-1. Run `curl --location 'http://localhost:8080/spaceship' \
---header 'Content-Type: application/json' \
---data '{
-    "id": 100,
-    "name": "Endurance",
-    "show": "Interstellar"
-}'`
+1. Run ` curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{ "id": 100, "name": "Endurance", "show": "Interstellar" }' \
+  http://localhost:8080/spaceship`
 2. Check logs in order to see log.info
